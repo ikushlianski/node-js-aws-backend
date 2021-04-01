@@ -1,13 +1,26 @@
+import { ProductService } from '../services/product.service';
+import { mockDbService } from '../db/mock-database/mock-database.service';
+import { getErrorCode } from '../../shared/src/errors';
+
+const productService = new ProductService(mockDbService);
+
 export const getProduct = async (event) => {
-  return {
-    statusCode: 200,
-    body: JSON.stringify(
-      {
-        message: 'Go Serverless v1.0! Your function executed successfully!',
-        input: event,
-      },
-      null,
-      2,
-    ),
-  };
+  const { id } = event.pathParameters;
+
+  try {
+    const result = await productService.getOne(id);
+    const body = JSON.stringify(result);
+
+    return result.length === 0
+      ? { statusCode: 404, body }
+      : {
+          statusCode: 200,
+          body,
+        };
+  } catch (error) {
+    return {
+      statusCode: getErrorCode(error),
+      body: JSON.stringify(error.message),
+    };
+  }
 };

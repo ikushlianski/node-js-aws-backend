@@ -22,5 +22,12 @@ module.exports = {
     ],
     'newline-before-return': 'warn',
     'no-multi-spaces': 'warn',
+    'padding-line-between-statements': [
+      'warn',
+      { blankLine: 'always', prev: ['const', 'let', 'var'], next: '*' },
+      { blankLine: 'always', prev: '*', next: ['const', 'let', 'var'] },
+      { blankLine: 'never', prev: ['const', 'let', 'var'], next: ['const', 'let', 'var'] },
+      { blankLine: 'always', prev: ['const', 'let', 'var'], next: 'multiline-const'  },
+    ],
   },
 };

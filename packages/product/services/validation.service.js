@@ -1,7 +1,17 @@
+import { HTTP_ERRORS } from '../../shared/src/errors';
+
 export class ProductValidationService {
   validateProductId(id) {
-    // todo add logic
-    return true;
+    if (this.isValidNumber(id)) return true;
+
+    const error = new Error(`${id} is invalid parameter`);
+
+    error.name = HTTP_ERRORS.UNPROCESSABLE_ENTITY;
+    throw error;
+  }
+
+  isValidNumber(input) {
+    return isNaN(input) === false;
   }
 }
 

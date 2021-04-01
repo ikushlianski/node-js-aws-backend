@@ -1,15 +1,15 @@
 import { products } from './mock-data';
 
-export class DatabaseService {
+export class MockDatabaseService {
   async find() {
     return Promise.resolve(products);
   }
 
   async findOne(id) {
-    const product = products.find((prod) => prod.id === id);
+    const product = products.filter((prod) => prod.id === Number(id));
 
     return Promise.resolve(product);
   }
 }
 
-export const dbService = new DatabaseService();
+export const mockDbService = new MockDatabaseService();

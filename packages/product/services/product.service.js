@@ -1,17 +1,17 @@
-import { dbService } from '../db/database.service';
 import { productValidator } from './validation.service';
 
 export class ProductService {
+  constructor(dbService) {
+    this.dbService = dbService;
+  }
+
   async getAll() {
-    return dbService.find();
+    return this.dbService.find();
   }
 
   async getOne(id) {
-    // todo catch error outside
     productValidator.validateProductId(id);
 
-    return dbService.findOne(id);
+    return this.dbService.findOne(id);
   }
 }
-
-export const productService = new ProductService();
