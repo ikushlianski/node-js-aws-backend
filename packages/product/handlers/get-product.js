@@ -12,7 +12,7 @@ export const getProduct = async (event) => {
     const body = JSON.stringify(result);
 
     return result.length === 0
-      ? { statusCode: 404, body }
+      ? { statusCode: 404, body: 'Not found' }
       : {
           statusCode: 200,
           body,
