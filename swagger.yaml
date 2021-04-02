@@ -82,7 +82,13 @@ components:
         id:
           type: integer
           format: int64
-        name:
+          example: 2
+        title:
           type: string
+          example: Some title
         description:
           type: string
+          example: Some longer description
+        price:
+          type: number
+          example: 50
