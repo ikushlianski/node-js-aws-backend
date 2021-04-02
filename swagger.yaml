@@ -1,0 +1,88 @@
+openapi: 3.0.0
+info:
+  description: Minsk tours ticket shop API
+  version: "1.0.0"
+  title: Minsk tours ticket shop API
+  contact:
+    email: ilya_kushlianski@epam.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+  - url: "https://dspss0mtn2.execute-api.eu-west-1.amazonaws.com/{basePath}"
+    description: API Gateway API. Currently, only 'dev' stage is supported
+    variables:
+      basePath:
+        default: "dev"
+        enum:
+          - dev
+          - qa
+          - prod
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/ikushlianski/minsk-tours-api/1.0.0
+
+
+tags:
+  - name: product
+    description: Store's products section
+
+paths:
+  '/products':
+    get:
+      tags:
+        - product
+      summary: Get all products
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '500':
+          description: Internal server error
+
+
+  '/products/{productId}':
+    get:
+      tags:
+        - product
+      summary: Find product by ID
+      description: Returns a single product
+      parameters:
+        - name: productId
+          in: path
+          description: 'ID of product to return: 1, 2, 3 etc. Values over 5 do not exist in mock database'
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+        '422':
+          description: Invalid ID supplied
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
