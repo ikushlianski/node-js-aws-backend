@@ -5,6 +5,7 @@ module.exports = {
     es6: true,
   },
   extends: ['plugin:prettier/recommended'],
+  plugins: ['@babel'],
   parserOptions: {
     ecmaVersion: 2021,
     sourceType: 'module',
@@ -26,8 +27,16 @@ module.exports = {
       'warn',
       { blankLine: 'always', prev: ['const', 'let', 'var'], next: '*' },
       { blankLine: 'always', prev: '*', next: ['const', 'let', 'var'] },
-      { blankLine: 'never', prev: ['const', 'let', 'var'], next: ['const', 'let', 'var'] },
-      { blankLine: 'always', prev: ['const', 'let', 'var'], next: 'multiline-const'  },
+      {
+        blankLine: 'never',
+        prev: ['const', 'let', 'var'],
+        next: ['const', 'let', 'var'],
+      },
+      {
+        blankLine: 'always',
+        prev: ['const', 'let', 'var'],
+        next: 'multiline-const',
+      },
     ],
   },
 };

@@ -9,5 +9,8 @@
   },
   "keywords": [],
   "author": "Ilya Kushlianski",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.13.14"
+  }
 }
