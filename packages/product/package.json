@@ -5,7 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy:dev": "NODE_ENV=development webpack && sls deploy",
-    "deploy:prod": "webpack && sls deploy"
+    "deploy:prod": "webpack && sls deploy",
+    "build:dev": "NODE_ENV=development webpack",
+    "build:prod": "webpack"
   },
   "keywords": [],
   "author": "Ilya Kushlianski",

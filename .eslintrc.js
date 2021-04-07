@@ -5,7 +5,6 @@ module.exports = {
     es6: true,
   },
   extends: ['plugin:prettier/recommended'],
-  plugins: ['@babel'],
   parserOptions: {
     ecmaVersion: 2021,
     sourceType: 'module',
