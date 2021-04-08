@@ -1,14 +1,13 @@
-import 'regenerator-runtime/runtime';
 import { ProductService } from './product.service';
-import { pgDatabaseService } from '../db/postgres/pg-database.service';
 
-// TODO fix openHanders in tests
 describe('Product Service', function () {
   describe('getAll()', function () {
     const initSpec = async (productList = ['product1', 'product2']) => {
-      jest.spyOn(pgDatabaseService, 'find').mockResolvedValue(productList);
-
-      const productService = new ProductService(pgDatabaseService);
+      const mockPgDatabaseService = {
+        find: jest.fn().mockResolvedValue(productList),
+        findOne: jest.fn(),
+      };
+      const productService = new ProductService(mockPgDatabaseService);
       const result = await productService.getAll();
 
       return { result, productList };
@@ -24,9 +23,11 @@ describe('Product Service', function () {
 
   describe('getOne()', function () {
     const initSpec = async (mockProduct) => {
-      jest.spyOn(pgDatabaseService, 'findOne').mockResolvedValue(mockProduct);
-
-      const productService = new ProductService(pgDatabaseService);
+      const mockPgDatabaseService = {
+        find: jest.fn(),
+        findOne: jest.fn().mockResolvedValue(mockProduct),
+      };
+      const productService = new ProductService(mockPgDatabaseService);
       let result, error;
 
       try {
@@ -38,15 +39,21 @@ describe('Product Service', function () {
       return { result, error };
     };
 
-    it('should return product with id 1', async () => {
-      const mockProduct = { id: 1, name: 'test product' };
+    it('should return product with id eeaf9772-f6b2-4896-b569-3f5a2b30dc4d', async () => {
+      const mockProduct = {
+        id: 'eeaf9772-f6b2-4896-b569-3f5a2b30dc4d',
+        name: 'test product',
+      };
       const { result } = await initSpec(mockProduct);
 
-      expect(result.id).toBe(1);
+      expect(result.id).toBe('eeaf9772-f6b2-4896-b569-3f5a2b30dc4d');
     });
 
     it('should not throw error if valid product id is passed', async () => {
-      const mockProduct = { id: 1, name: 'test product' };
+      const mockProduct = {
+        id: 'eeaf9772-f6b2-4896-b569-3f5a2b30dc4d',
+        name: 'test product',
+      };
       const { result, error } = await initSpec(mockProduct);
 
       expect(result).not.toBeFalsy();

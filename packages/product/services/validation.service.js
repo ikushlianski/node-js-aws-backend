@@ -3,7 +3,7 @@ import { HTTP_ERRORS } from '../../shared/src/errors';
 
 export class ProductValidationService {
   async validateProductId(id) {
-    const uuidSchema = yup.string().uuid();
+    const uuidSchema = yup.string().uuid().required();
     const isValid = await uuidSchema.isValid(id);
 
     if (isValid) return true;
