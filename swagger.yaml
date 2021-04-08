@@ -56,9 +56,9 @@ paths:
           description: 'ID of product to return: 1, 2, 3 etc. Values over 5 do not exist in mock database'
           required: true
           schema:
-            type: integer
-            format: int64
-          example: 1
+            type: string
+            format: uuid
+          example: 'eeaf9772-f6b2-4896-b569-3f5a2b30dc4d'
 
       responses:
         '200':
@@ -80,9 +80,9 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
-          example: 2
+          type: string
+          format: uuid
+          example: 'eeaf9772-f6b2-4896-b569-3f5a2b30dc4d'
         title:
           type: string
           example: Some title
@@ -92,3 +92,6 @@ components:
         price:
           type: number
           example: 50
+        count:
+          type: number
+          example: 15
