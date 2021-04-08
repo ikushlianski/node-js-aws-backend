@@ -3,9 +3,12 @@ frameworkVersion: '2'
 
 plugins:
   - serverless-offline
+  - serverless-dotenv-plugin
 
 custom:
   distFolder: ./build/handlers
+
+useDotenv: true
 
 provider:
   name: aws

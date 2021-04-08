@@ -10,7 +10,7 @@ export class ProductService {
   }
 
   async getOne(id) {
-    productValidator.validateProductId(id);
+    await productValidator.validateProductId(id);
 
     return this.dbService.findOne(id);
   }

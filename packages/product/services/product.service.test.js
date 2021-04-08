@@ -1,13 +1,14 @@
 import 'regenerator-runtime/runtime';
 import { ProductService } from './product.service';
-import { mockDbService } from '../db/mock-database/mock-database.service';
+import { pgDatabaseService } from '../db/postgres/pg-database.service';
 
+// TODO fix openHanders in tests
 describe('Product Service', function () {
   describe('getAll()', function () {
     const initSpec = async (productList = ['product1', 'product2']) => {
-      jest.spyOn(mockDbService, 'find').mockResolvedValue(productList);
+      jest.spyOn(pgDatabaseService, 'find').mockResolvedValue(productList);
 
-      const productService = new ProductService(mockDbService);
+      const productService = new ProductService(pgDatabaseService);
       const result = await productService.getAll();
 
       return { result, productList };
@@ -23,9 +24,9 @@ describe('Product Service', function () {
 
   describe('getOne()', function () {
     const initSpec = async (mockProduct) => {
-      jest.spyOn(mockDbService, 'findOne').mockResolvedValue(mockProduct);
+      jest.spyOn(pgDatabaseService, 'findOne').mockResolvedValue(mockProduct);
 
-      const productService = new ProductService(mockDbService);
+      const productService = new ProductService(pgDatabaseService);
       let result, error;
 
       try {

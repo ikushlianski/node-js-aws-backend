@@ -1,9 +1,9 @@
 import { ProductService } from '../services/product.service';
-import { mockDbService } from '../db/mock-database/mock-database.service';
 import { getErrorCode } from '../../shared/src/errors';
 import { getCorsHeaders } from '../../shared/src/utils/cors-headers';
+import { pgDatabaseService } from '../db/postgres/pg-database.service';
 
-const productService = new ProductService(mockDbService);
+const productService = new ProductService(pgDatabaseService);
 
 export const getProduct = async (event) => {
   const { id } = event.pathParameters;
