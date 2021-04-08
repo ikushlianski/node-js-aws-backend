@@ -1,5 +1,10 @@
 import { Client } from 'pg';
-import { createProductsTableQuery, createStockTableQuery } from './ddl';
+import {
+  createProductsTableQuery,
+  createStockTableQuery,
+  installExtensionsQuery,
+} from './ddl';
+import { populateProductsTableQuery, populateStockTableQuery } from './dml';
 require('dotenv').config();
 
 const connectToDB = async () => {
@@ -27,14 +32,27 @@ const createTables = async (client) => {
   await client.query(createStockTableQuery);
 };
 
-// const populateTables = async (client) => {
-//   await client.query(populateProductsTable);
-//   await client.query(populateStockTable);
-// };
+const prepareDatabase = async (client) => {
+  await client.query(installExtensionsQuery);
+};
 
-connectToDB().then(async (client) => {
-  await createTables(client);
-  console.log('Created product tables');
-  // await populateTables(client);
-  // console.log('Populated product tables');
-});
+const populateTables = async (client) => {
+  await client.query(populateProductsTableQuery);
+  await client.query(populateStockTableQuery);
+};
+
+connectToDB()
+  .then(async (client) => {
+    await prepareDatabase(client);
+    await createTables(client);
+    console.log('Created product tables');
+
+    await populateTables(client);
+    console.log('Populated product tables');
+  })
+  .catch((error) => {
+    console.log('Error populating database', error);
+  })
+  .finally(() => {
+    process.exit();
+  });
