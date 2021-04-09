@@ -1,6 +1,6 @@
 export const createProductsTableQuery = `
   CREATE TABLE IF NOT EXISTS public.product (
-	  id uuid NOT NULL,
+	  id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	  title text NOT NULL,
 	  description text NULL,
 	  price int NULL,

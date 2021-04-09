@@ -33,4 +33,10 @@ functions:
           method: get
           path: /products/{id}
           cors: true
-
+  createProduct:
+    handler: ${self:custom.distFolder}/create-product.createProduct
+    events:
+      - http:
+          method: post
+          path: /products
+          cors: true
