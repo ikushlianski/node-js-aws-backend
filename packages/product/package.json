@@ -1,0 +1,13 @@
+{
+  "name": "@nodejs-aws-be/product",
+  "version": "0.1.0",
+  "description": "Product service of My Shop",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy:dev": "NODE_ENV=development webpack && sls deploy",
+    "deploy:prod": "webpack && sls deploy"
+  },
+  "keywords": [],
+  "author": "Ilya Kushlianski",
+  "license": "ISC"
+}
