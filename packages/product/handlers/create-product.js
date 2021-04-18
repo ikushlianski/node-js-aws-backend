@@ -10,12 +10,14 @@ export const createProduct = async (event) => {
   const headers = { ...corsHeaders };
   const { body: productData } = event;
 
+  console.log('create-product handler :: Received data', productData);
+
   try {
     const productId = await productService.create(productData);
 
     return {
       statusCode: 201,
-      body: productId,
+      body: JSON.stringify({ id: productId }),
       headers,
     };
   } catch (error) {

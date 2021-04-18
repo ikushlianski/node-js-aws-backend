@@ -13,7 +13,7 @@ export const createStockTableQuery = `
 	  product_id uuid,
 	  count int DEFAULT 0,
 	  CONSTRAINT product_id_fk
-	  FOREIGN KEY (product_id) REFERENCES public.product(id)
+	  FOREIGN KEY (product_id) REFERENCES public.product(id) ON DELETE CASCADE
   );
 `;
 

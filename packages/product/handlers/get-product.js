@@ -7,6 +7,9 @@ const productService = new ProductService(pgDatabaseService);
 
 export const getProduct = async (event) => {
   const { id } = event.pathParameters;
+
+  console.log('get-product handler :: Received parameter', id);
+
   const corsHeaders = getCorsHeaders();
   const headers = { ...corsHeaders };
 

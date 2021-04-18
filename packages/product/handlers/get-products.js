@@ -8,6 +8,8 @@ export const getProducts = async (event) => {
   const corsHeaders = getCorsHeaders();
   const headers = { ...corsHeaders };
 
+  console.log('get-products handler triggered');
+
   try {
     const result = await productService.getAll();
 

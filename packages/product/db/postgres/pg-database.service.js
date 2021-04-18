@@ -62,7 +62,7 @@ export class PgDatabaseService {
         [title, description, price],
       );
 
-      console.log('Created product id', id);
+      console.log('Created a product with id', id);
 
       await client.query(
         `insert into public.stocks(product_id, count) VALUES($1, $2)`,
