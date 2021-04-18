@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   description: Minsk tours ticket shop API
-  version: "1.0.0"
+  version: 1.3.0
   title: Minsk tours ticket shop API
   contact:
     email: ilya_kushlianski@epam.com
@@ -40,6 +40,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Product'
+        '500':
+          description: Internal server error
+    post:
+      tags:
+        - product
+      summary: Create new product
+      requestBody:
+        description: Attributes required to create a product
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                count:
+                  type: number
+              required:
+                - title
+                - price
+                - count
+
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuidv4
+                    example: "eeaf9772-f6b2-4896-b569-3f5a2b30dc4d"
+        '400':
+          description: Bad request. Body structure does not match the one that's expected
         '500':
           description: Internal server error
 
