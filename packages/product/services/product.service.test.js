@@ -68,4 +68,93 @@ describe('Product Service', function () {
       expect(result).toBeFalsy();
     });
   });
+
+  describe('create product', function () {
+    const initSpec = async (mockProduct) => {
+      const generatedUuid = 'some generated uuid';
+
+      const mockPgDatabaseService = {
+        create: jest
+          .fn()
+          .mockResolvedValue({ ...mockProduct, id: generatedUuid }),
+      };
+      const productService = new ProductService(mockPgDatabaseService);
+      let result, error;
+
+      try {
+        result = await productService.create(mockProduct);
+      } catch (e) {
+        error = e;
+      }
+
+      return { result, error, mockPgDatabaseService, generatedUuid };
+    };
+
+    it('should throw error if title is missing', async () => {
+      const { result, error } = await initSpec({
+        description: 'some description',
+        count: 1,
+        price: 15,
+      });
+
+      expect(error).not.toBeFalsy();
+      expect(result).toBeUndefined();
+    });
+
+    it('should throw error if count is missing', async () => {
+      const { result, error } = await initSpec({
+        description: 'some description',
+        title: 'Some product without count',
+        price: 15,
+      });
+
+      expect(error).not.toBeFalsy();
+      expect(result).toBeUndefined();
+    });
+
+    it('should throw error if price is missing', async () => {
+      const { result, error } = await initSpec({
+        description: 'some description',
+        title: 'Some product without price',
+        count: 7,
+      });
+
+      expect(error).not.toBeFalsy();
+      expect(result).toBeUndefined();
+    });
+
+    it('should call DB service with valid product parameters to be saved', async () => {
+      const { result, error, mockPgDatabaseService } = await initSpec({
+        description: 'some description',
+        title: 'Some product without price',
+        count: 7,
+        price: 20,
+      });
+
+      expect(mockPgDatabaseService.create).toHaveBeenCalledTimes(1);
+      expect(mockPgDatabaseService.create).toHaveBeenCalledWith({
+        description: 'some description',
+        title: 'Some product without price',
+        count: 7,
+        price: 20,
+      });
+    });
+
+    it('should return a generated product id', async () => {
+      const { generatedUuid, result } = await initSpec({
+        description: 'some description',
+        title: 'Some product without price',
+        count: 7,
+        price: 20,
+      });
+
+      expect(result).toEqual({
+        description: 'some description',
+        title: 'Some product without price',
+        count: 7,
+        price: 20,
+        id: generatedUuid,
+      });
+    });
+  });
 });
