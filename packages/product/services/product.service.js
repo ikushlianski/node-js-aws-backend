@@ -10,8 +10,14 @@ export class ProductService {
   }
 
   async getOne(id) {
-    productValidator.validateProductId(id);
+    await productValidator.validateProductId(id);
 
     return this.dbService.findOne(id);
+  }
+
+  async create(product) {
+    await productValidator.validateProductBody(product);
+
+    return this.dbService.create(product);
   }
 }

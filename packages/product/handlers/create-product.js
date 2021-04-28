@@ -5,25 +5,21 @@ import { pgDatabaseService } from '../db/postgres/pg-database.service';
 
 const productService = new ProductService(pgDatabaseService);
 
-export const getProduct = async (event) => {
-  const { id } = event.pathParameters;
-
-  console.log('get-product handler :: Received parameter', id);
-
+export const createProduct = async (event) => {
   const corsHeaders = getCorsHeaders();
   const headers = { ...corsHeaders };
+  const { body: productData } = event;
+
+  console.log('create-product handler :: Received data', productData);
 
   try {
-    const result = await productService.getOne(id);
-    const body = JSON.stringify(result);
+    const productId = await productService.create(productData);
 
-    return result.length === 0
-      ? { statusCode: 404, body: 'Not found', headers }
-      : {
-          statusCode: 200,
-          body,
-          headers,
-        };
+    return {
+      statusCode: 201,
+      body: JSON.stringify({ id: productId }),
+      headers,
+    };
   } catch (error) {
     return {
       statusCode: getErrorCode(error),

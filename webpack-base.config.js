@@ -1,4 +1,7 @@
+const webpack = require('webpack');
+
 module.exports = {
+  target: 'node',
   module: {
     rules: [
       {
@@ -29,4 +32,5 @@ module.exports = {
     libraryTarget: 'commonjs2',
     clean: true,
   },
+  plugins: [new webpack.IgnorePlugin({ resourceRegExp: /^pg-native$/ })],
 };

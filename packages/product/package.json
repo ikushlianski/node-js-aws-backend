@@ -3,11 +3,18 @@
   "version": "0.1.0",
   "description": "Product service of My Shop",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "deploy:dev": "NODE_ENV=development webpack && sls deploy",
-    "deploy:prod": "webpack && sls deploy"
+    "deploy": "NODE_ENV=development webpack && sls deploy",
+    "deploy:prod": "webpack && sls deploy",
+    "build:dev": "NODE_ENV=development webpack",
+    "build:prod": "webpack",
+    "seed": "NODE_ENV=development webpack && node build/populate-products.js"
   },
   "keywords": [],
   "author": "Ilya Kushlianski",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "serverless-dotenv-plugin": "^3.9.0"
+  }
 }

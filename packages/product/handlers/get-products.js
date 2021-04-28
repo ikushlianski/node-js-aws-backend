@@ -1,12 +1,14 @@
 import { ProductService } from '../services/product.service';
-import { mockDbService } from '../db/mock-database/mock-database.service';
 import { getCorsHeaders } from '../../shared/src/utils/cors-headers';
+import { pgDatabaseService } from '../db/postgres/pg-database.service';
 
-const productService = new ProductService(mockDbService);
+const productService = new ProductService(pgDatabaseService);
 
 export const getProducts = async (event) => {
   const corsHeaders = getCorsHeaders();
   const headers = { ...corsHeaders };
+
+  console.log('get-products handler triggered');
 
   try {
     const result = await productService.getAll();

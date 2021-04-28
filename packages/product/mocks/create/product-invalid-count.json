@@ -1,0 +1,12 @@
+{
+  "path": "/products",
+  "httpMethod": "POST",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "queryStringParameters": null,
+  "pathParameters": null,
+  "stageVariables": null,
+  "body": "{\"title\": \"test product\", \"price\": 999, \"count\": \"invalid product count here\"}",
+  "isBase64Encoded": false
+}

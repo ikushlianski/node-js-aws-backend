@@ -26,8 +26,16 @@ module.exports = {
       'warn',
       { blankLine: 'always', prev: ['const', 'let', 'var'], next: '*' },
       { blankLine: 'always', prev: '*', next: ['const', 'let', 'var'] },
-      { blankLine: 'never', prev: ['const', 'let', 'var'], next: ['const', 'let', 'var'] },
-      { blankLine: 'always', prev: ['const', 'let', 'var'], next: 'multiline-const'  },
+      {
+        blankLine: 'never',
+        prev: ['const', 'let', 'var'],
+        next: ['const', 'let', 'var'],
+      },
+      {
+        blankLine: 'always',
+        prev: ['const', 'let', 'var'],
+        next: 'multiline-const',
+      },
     ],
   },
 };
