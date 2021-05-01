@@ -1,0 +1,22 @@
+{
+  "name": "@nodejs-aws-be/import-service",
+  "version": "0.1.0",
+  "description": "Import service for My Shop",
+  "scripts": {
+    "test": "jest",
+    "deploy:dev": "NODE_ENV=development webpack && sls deploy",
+    "deploy": "NODE_ENV=development webpack && sls deploy",
+    "deploy:prod": "webpack && sls deploy",
+    "build:dev": "NODE_ENV=development webpack",
+    "build:prod": "webpack"
+  },
+  "keywords": [],
+  "author": "Ilya Kushlianski",
+  "license": "ISC",
+  "dependencies": {
+    "csv-parser": "^3.0.0"
+  },
+  "devDependencies": {
+    "serverless-dotenv-plugin": "^3.9.0"
+  }
+}

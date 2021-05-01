@@ -18,8 +18,8 @@ export class ProductValidationService {
     const productSchema = yup.object().shape({
       title: yup.string().required(),
       description: yup.string(),
-      price: yup.number().required(),
-      count: yup.number().required(),
+      price: yup.number().min(0).required(),
+      count: yup.number().min(0).required(),
     });
     const isValid = await productSchema.isValid(product);
 
