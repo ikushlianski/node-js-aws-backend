@@ -22,7 +22,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "s3:*"
-      Resource: "arn:aws:s3:::${self.custom.bucket}"
+      Resource: "arn:aws:s3:::epam-aws-training-task-5-upload/*"
 
 functions:
   importProductsFile:
@@ -35,13 +35,12 @@ functions:
             parameters:
               querystrings:
                 name: true
-#  importFileParser:
-#    handler: ${self:custom.distFolder}/import-file-parser.importFileParser
-#    events:
-#      - s3:
-#          bucket: ${env:UPLOAD_BUCKET}
-#          event: s3:ObjectCreated:*
-#          rules:
-#            - prefix: uploaded/
-#            - suffix: ${env:PRODUCTS_FILE_EXTENSION}
-#          existing: true
+  importFileParser:
+    handler: ${self:custom.distFolder}/import-file-parser.importFileParser
+    events:
+      - s3:
+          bucket: ${env:UPLOAD_BUCKET}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: ${env:UPLOADED_FOLDER}
+          existing: true

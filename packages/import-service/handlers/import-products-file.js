@@ -7,11 +7,9 @@ export const importProductsFile = async (event) => {
 
   console.log('productsFileName from query params:', productsFileName);
 
-  const fullFileName = productsFileName + process.env.PRODUCTS_FILE_EXTENSION;
-
   const signedUrlParams = {
     Bucket: process.env.UPLOAD_BUCKET,
-    Key: fullFileName,
+    Key: productsFileName,
   };
 
   console.log('signedUrlParams:', signedUrlParams);
