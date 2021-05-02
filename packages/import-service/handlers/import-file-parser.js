@@ -1,36 +1,43 @@
-import AWS from 'aws-sdk';
+import { fileParserService } from '../services/file-parser.service';
 
 export const importFileParser = async (event) => {
-  const s3 = new AWS.S3();
-  const bucket = event.Records[0].s3.bucket.name;
+  const { bucket, key } = fileParserService.getObjectParamsFromEvent(event);
 
-  console.log('--------->', bucket);
+  console.log('bucket', bucket);
+  console.log('key', key);
 
-  const key = decodeURIComponent(
-    event.Records[0].s3.object.key.replace(/\+/g, ' '),
+  const s3GetObjectHandle = fileParserService.makeS3GetObjectHandle(
+    bucket,
+    key,
   );
 
-  const params = {
-    Bucket: bucket,
-    Key: key,
-  };
-
-  console.dir(params);
-
   try {
-    console.log('trying to get object from s3');
+    await fileParserService.parseS3FileContents(s3GetObjectHandle);
 
-    const data = await s3.getObject(params).promise();
+    const s3CopyObjectHandle = fileParserService.makeS3CopyObjectHandle(
+      bucket,
+      key,
+    );
 
-    console.log('data in the PROD FILE:', data);
+    const s3DeleteObjectHandle = fileParserService.makeS3DeleteObjectHandle(
+      bucket,
+      key,
+    );
+
+    await fileParserService.moveFileToParsedFolder(
+      s3CopyObjectHandle,
+      s3DeleteObjectHandle,
+    );
 
     return {
+      // or 201 if we actually wrote parsed data to DB
       statusCode: 200,
     };
   } catch (err) {
     console.log(err);
 
-    const message = `Error getting object ${key} from bucket ${bucket}`;
+    const message = `Error processing object ${key} from bucket ${bucket}.
+    Details: ${err}`;
 
     console.log(message);
     throw new Error(message);
