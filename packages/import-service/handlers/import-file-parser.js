@@ -1,4 +1,5 @@
 import { fileParserService } from '../services/file-parser.service';
+import { getCorsHeaders } from '../../shared/src/utils/cors-headers';
 
 export const importFileParser = async (event) => {
   const { bucket, key } = fileParserService.getObjectParamsFromEvent(event);
@@ -29,9 +30,13 @@ export const importFileParser = async (event) => {
       s3DeleteObjectHandle,
     );
 
+    const corsHeaders = getCorsHeaders();
+    const headers = { ...corsHeaders };
+
     return {
       // or 201 if we actually wrote parsed data to DB
       statusCode: 200,
+      headers,
     };
   } catch (err) {
     console.log(err);
