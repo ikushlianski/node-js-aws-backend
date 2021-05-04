@@ -6,25 +6,25 @@ const s3 = new AWS.S3();
 
 class FileParserService {
   async parseS3FileContents(s3ObjectHandle) {
+    const stream = s3ObjectHandle.createReadStream();
+
     return new Promise((resolve, reject) => {
-      console.log('inside parseS3FileContents');
-
-      const stream = s3ObjectHandle.createReadStream();
-
-      console.log('created a read stream');
-
       stream
         .pipe(csvParser())
-        .on('data', this.handleDataChunk)
+        .on('data', (data) => {
+          this.handleDataChunk(data);
+        })
         .on('error', (error) => {
           console.error(error);
           reject(error);
         })
-        .on('end', () => resolve(stream));
+        .on('end', () => {
+          resolve();
+        });
     });
   }
 
-  async handleDataChunk(chunk) {
+  handleDataChunk(chunk) {
     console.log('=== GOT NEW PRODUCT ===');
     console.log('Product id:', chunk.id);
     console.log('Product title:', chunk.title);

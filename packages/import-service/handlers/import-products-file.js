@@ -33,6 +33,9 @@ export const importProductsFile = async (event) => {
   } catch (error) {
     console.error('Error getting signed URL:', error);
 
+    const corsHeaders = getCorsHeaders();
+    const headers = { ...corsHeaders };
+
     return {
       statusCode: getErrorCode(error),
       body: JSON.stringify(error.message),
