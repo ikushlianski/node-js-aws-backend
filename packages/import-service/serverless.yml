@@ -1,0 +1,48 @@
+service: upload-service
+frameworkVersion: '2'
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+custom:
+  distFolder: ./build/handlers
+  bucket: ${env:UPLOAD_BUCKET}
+
+useDotenv: true
+
+provider:
+  name: aws
+  region: eu-west-1
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  stage: dev
+  profile: epam-aws-training-account
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource: "arn:aws:s3:::epam-aws-training-task-5-upload/*"
+
+functions:
+  importProductsFile:
+    handler: ${self:custom.distFolder}/import-products-file.importProductsFile
+    events:
+      - http:
+          path: import
+          method: get
+          cors: true
+          request:
+            parameters:
+              querystrings:
+                name: true
+  importFileParser:
+    handler: ${self:custom.distFolder}/import-file-parser.importFileParser
+    events:
+      - s3:
+          bucket: ${env:UPLOAD_BUCKET}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: ${env:UPLOADED_FOLDER}
+          existing: true
+          cors: true
