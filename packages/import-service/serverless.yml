@@ -18,11 +18,39 @@ provider:
   lambdaHashingVersion: 20201221
   stage: dev
   profile: epam-aws-training-account
+
+  environment:
+    CATALOG_ITEMS_QUEUE:
+      Ref: catalogItemsQueue
+
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "s3:*"
       Resource: "arn:aws:s3:::epam-aws-training-task-5-upload/*"
+    - Effect: "Allow"
+      Action:
+        - "sqs:*"
+      Resource:
+        - Fn::GetAtt: [catalogItemsQueue, Arn]
+
+resources:
+  Resources:
+    catalogItemsQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "catalogItemsQueue"
+    createProductTopic:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        TopicName: "createProductTopic"
+    createProductSubscription:
+      Type: "AWS::SNS::Subscription"
+      Properties:
+        Endpoint: ${env:SUBSCRIPTION_ENDPOINT_1}
+        Protocol: email
+        TopicArn:
+          Ref: createProductTopic
 
 functions:
   importProductsFile:
@@ -46,3 +74,12 @@ functions:
             - prefix: ${env:UPLOADED_FOLDER}
           existing: true
           cors: true
+  catalogBatchProcess:
+    handler: ${self:custom.distFolder}/catalog-batch-process.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - catalogItemsQueue
+              - Arn

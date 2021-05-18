@@ -3,6 +3,8 @@ import AWS from 'aws-sdk';
 import csvParser from 'csv-parser';
 
 const s3 = new AWS.S3();
+const sqs = new AWS.SQS();
+const sns = new AWS.SNS();
 
 class FileParserService {
   async parseS3FileContents(s3ObjectHandle) {
@@ -19,21 +21,24 @@ class FileParserService {
           reject(error);
         })
         .on('end', () => {
+          // todo send email
           resolve();
         });
     });
   }
 
   handleDataChunk(chunk) {
-    console.log('=== GOT NEW PRODUCT ===');
-    console.log('Product id:', chunk.id);
-    console.log('Product title:', chunk.title);
-    console.log('Product description:', chunk.description);
-    console.log('Product price:', chunk.price);
-    console.log('Product count:', chunk.count);
-    console.log('=== END NEW PRODUCT PARSING ===');
+    console.log('Got new product with title:', chunk.title);
 
-    // record chunk to db, etc...
+    sqs.sendMessage(
+      {
+        QueueUrl: process.env.CATALOG_ITEMS_QUEUE,
+        MessageBody: JSON.stringify(chunk),
+      },
+      () => {
+        console.log('Message sent for chunk title', chunk.title);
+      },
+    );
   }
 
   getObjectParamsFromEvent(event) {
