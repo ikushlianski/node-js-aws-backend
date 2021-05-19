@@ -14,19 +14,27 @@ export const catalogBatchProcess = async (event) => {
   try {
     await Promise.all(productSavePromises);
 
-    const parsedProductTitles = event.Records.map(
-      ({ body: stringifiedProduct }) => {
-        return JSON.parse(stringifiedProduct);
-      },
-    ).map((prod) => prod.title);
+    const parsedProducts = event.Records.map(({ body: stringifiedProduct }) => {
+      return JSON.parse(stringifiedProduct);
+    });
 
-    await sns
-      .publish({
-        Subject: 'Products uploaded',
-        Message: buildMessage(parsedProductTitles),
-        TopicArn: process.env.CREATE_PRODUCT_TOPIC,
-      })
-      .promise();
+    const messagePromises = parsedProducts.map((product) => {
+      return sns
+        .publish({
+          Subject: `${product.title} uploaded`,
+          Message: JSON.stringify(product),
+          TopicArn: process.env.CREATE_PRODUCT_TOPIC,
+          MessageAttributes: {
+            title: {
+              DataType: 'String',
+              StringValue: product.title,
+            },
+          },
+        })
+        .promise();
+    });
+
+    await Promise.all(messagePromises);
 
     return {
       statusCode: 200,

@@ -58,6 +58,10 @@ resources:
         Protocol: email
         TopicArn:
           Ref: createProductTopic
+        FilterPolicy: {
+          "title": ["Classic tour of Minsk"]
+        }
+
     createExpensiveProductSubscription:
       Type: "AWS::SNS::Subscription"
       Properties:
@@ -65,6 +69,9 @@ resources:
         Protocol: email
         TopicArn:
           Ref: createProductTopic
+        FilterPolicy: {
+          "title": [{"anything-but":"Classic tour of Minsk"}]
+        }
 
 functions:
   importProductsFile:
