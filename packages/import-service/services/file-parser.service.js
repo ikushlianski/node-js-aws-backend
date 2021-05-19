@@ -8,27 +8,28 @@ const sns = new AWS.SNS();
 
 class FileParserService {
   async parseS3FileContents(s3ObjectHandle) {
+    const productTitles = [];
     const stream = s3ObjectHandle.createReadStream();
 
     return new Promise((resolve, reject) => {
       stream
         .pipe(csvParser())
         .on('data', (data) => {
-          this.handleDataChunk(data);
+          this.handleDataChunk(data, productTitles);
         })
         .on('error', (error) => {
           console.error(error);
+
           reject(error);
         })
-        .on('end', () => {
-          // todo send email
-          resolve();
-        });
+        .on('end', () => this.handleEnd(productTitles, resolve));
     });
   }
 
-  handleDataChunk(chunk) {
+  handleDataChunk(chunk, productTitles) {
     console.log('Got new product with title:', chunk.title);
+
+    productTitles.push(chunk.title);
 
     sqs.sendMessage(
       {
@@ -37,6 +38,21 @@ class FileParserService {
       },
       () => {
         console.log('Message sent for chunk title', chunk.title);
+      },
+    );
+  }
+
+  handleEnd(productTitles, resolve) {
+    sns.publish(
+      {
+        Subject: 'Products: upload status',
+        Message: this.buildMessage(productTitles),
+        TopicArn: process.env.CREATE_PRODUCT_TOPIC,
+      },
+      () => {
+        console.log('Success email sent');
+
+        resolve();
       },
     );
   }
@@ -95,6 +111,12 @@ class FileParserService {
 
   getFileNameFromKey(key) {
     return path.basename(key);
+  }
+
+  buildMessage(productTitles) {
+    return `The following products were saved successfully:\n${productTitles.join(
+      '\n',
+    )}`;
   }
 }
 

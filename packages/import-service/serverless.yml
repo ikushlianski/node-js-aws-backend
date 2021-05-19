@@ -22,6 +22,8 @@ provider:
   environment:
     CATALOG_ITEMS_QUEUE:
       Ref: catalogItemsQueue
+    CREATE_PRODUCT_TOPIC:
+      Ref: createProductTopic
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -33,21 +35,33 @@ provider:
         - "sqs:*"
       Resource:
         - Fn::GetAtt: [catalogItemsQueue, Arn]
+    - Effect: "Allow"
+      Action:
+        - "sns:*"
+      Resource:
+        Ref: createProductTopic
 
 resources:
   Resources:
     catalogItemsQueue:
       Type: "AWS::SQS::Queue"
       Properties:
-        QueueName: "catalogItemsQueue"
+        QueueName: catalogItemsQueue
     createProductTopic:
       Type: "AWS::SNS::Topic"
       Properties:
-        TopicName: "createProductTopic"
+        TopicName: createProductTopic
     createProductSubscription:
       Type: "AWS::SNS::Subscription"
       Properties:
         Endpoint: ${env:SUBSCRIPTION_ENDPOINT_1}
+        Protocol: email
+        TopicArn:
+          Ref: createProductTopic
+    createExpensiveProductSubscription:
+      Type: "AWS::SNS::Subscription"
+      Properties:
+        Endpoint: ${env:SUBSCRIPTION_ENDPOINT_2}
         Protocol: email
         TopicArn:
           Ref: createProductTopic
