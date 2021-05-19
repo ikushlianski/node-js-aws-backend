@@ -4,7 +4,6 @@ import csvParser from 'csv-parser';
 
 const s3 = new AWS.S3();
 const sqs = new AWS.SQS();
-const sns = new AWS.SNS();
 
 class FileParserService {
   async parseS3FileContents(s3ObjectHandle) {
@@ -22,37 +21,28 @@ class FileParserService {
 
           reject(error);
         })
-        .on('end', () => this.handleEnd(productTitles, resolve));
+        .on('end', () => {
+          console.log('Finish parsing products');
+
+          resolve();
+        });
     });
   }
 
   handleDataChunk(chunk, productTitles) {
-    console.log('Got new product with title:', chunk.title);
-
     productTitles.push(chunk.title);
+
+    const messageBody = JSON.stringify(chunk);
+
+    console.log('==> messageBody:', messageBody);
 
     sqs.sendMessage(
       {
         QueueUrl: process.env.CATALOG_ITEMS_QUEUE,
-        MessageBody: JSON.stringify(chunk),
+        MessageBody: messageBody,
       },
       () => {
         console.log('Message sent for chunk title', chunk.title);
-      },
-    );
-  }
-
-  handleEnd(productTitles, resolve) {
-    sns.publish(
-      {
-        Subject: 'Products: upload status',
-        Message: this.buildMessage(productTitles),
-        TopicArn: process.env.CREATE_PRODUCT_TOPIC,
-      },
-      () => {
-        console.log('Success email sent');
-
-        resolve();
       },
     );
   }
@@ -111,12 +101,6 @@ class FileParserService {
 
   getFileNameFromKey(key) {
     return path.basename(key);
-  }
-
-  buildMessage(productTitles) {
-    return `The following products were saved successfully:\n${productTitles.join(
-      '\n',
-    )}`;
   }
 }
 
