@@ -41,7 +41,7 @@ export const catalogBatchProcess = async (event) => {
       body: 'Success',
     };
   } catch (error) {
-    console.log('Error inserting products', error);
+    console.error('Error inserting products', error);
 
     return {
       statusCode: getErrorCode(error),
@@ -49,9 +49,3 @@ export const catalogBatchProcess = async (event) => {
     };
   }
 };
-
-function buildMessage(productTitles) {
-  return `The following products were saved successfully:\n${productTitles.join(
-    '\n',
-  )}`;
-}
