@@ -1,9 +1,9 @@
-import { pgDatabaseService } from '../services/pg-database.service';
 import { catalogBatchProcess } from './catalog-batch-process';
+import { pgDatabaseService } from '../db/postgres/pg-database.service';
 import { publish } from './__mocks__/aws-sdk';
-import { getErrorCode } from '../../shared/src/errors';
 
 jest.mock('aws-sdk');
+jest.mock('pg');
 
 const event = {
   Records: [
@@ -24,7 +24,7 @@ describe('CatalogBatchProcess', () => {
   it('should call create method on pgDatabaseService twice', async () => {
     const createSpy = jest
       .spyOn(pgDatabaseService, 'create')
-      .mockImplementation();
+      .mockReturnValue(null);
 
     jest.spyOn(Promise, 'all').mockImplementation();
 
@@ -34,7 +34,7 @@ describe('CatalogBatchProcess', () => {
   });
 
   it('should call sns.publish with required params', async () => {
-    jest.spyOn(pgDatabaseService, 'create').mockImplementation();
+    jest.spyOn(pgDatabaseService, 'create').mockReturnValue(null);
 
     jest.spyOn(Promise, 'all').mockImplementation();
 
@@ -54,7 +54,7 @@ describe('CatalogBatchProcess', () => {
   });
 
   it('should call sns.publish twice', async () => {
-    jest.spyOn(pgDatabaseService, 'create').mockImplementation();
+    jest.spyOn(pgDatabaseService, 'create').mockReturnValue(null);
 
     jest.spyOn(Promise, 'all').mockImplementation();
 
@@ -64,7 +64,7 @@ describe('CatalogBatchProcess', () => {
   });
 
   it('should return error response if anything fails in the handler', async () => {
-    jest.spyOn(pgDatabaseService, 'create').mockImplementation();
+    jest.spyOn(pgDatabaseService, 'create').mockReturnValue(null);
 
     jest.spyOn(Promise, 'all').mockRejectedValue(new Error('some error'));
     jest.spyOn(console, 'error').mockImplementation();

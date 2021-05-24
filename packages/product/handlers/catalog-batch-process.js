@@ -1,6 +1,6 @@
-import { pgDatabaseService } from '../services/pg-database.service';
 import { getErrorCode } from '../../shared/src/errors';
 import AWS from 'aws-sdk';
+import { pgDatabaseService } from '../db/postgres/pg-database.service';
 
 const sns = new AWS.SNS();
 

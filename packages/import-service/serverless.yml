@@ -18,60 +18,32 @@ provider:
   lambdaHashingVersion: 20201221
   stage: dev
   profile: epam-aws-training-account
+  stackName: importServiceStack
 
   environment:
     CATALOG_ITEMS_QUEUE:
       Ref: catalogItemsQueue
-    CREATE_PRODUCT_TOPIC:
-      Ref: createProductTopic
 
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "s3:*"
-      Resource: "arn:aws:s3:::epam-aws-training-task-5-upload/*"
-    - Effect: "Allow"
-      Action:
         - "sqs:*"
       Resource:
-        - Fn::GetAtt: [catalogItemsQueue, Arn]
+        - Fn::GetAtt: [ catalogItemsQueue, Arn ]
     - Effect: "Allow"
       Action:
-        - "sns:*"
-      Resource:
-        Ref: createProductTopic
+        - "s3:*"
+      Resource: "arn:aws:s3:::epam-aws-training-task-5-upload/*"
 
 resources:
-  Resources:
-    catalogItemsQueue:
-      Type: "AWS::SQS::Queue"
-      Properties:
-        QueueName: catalogItemsQueue
-    createProductTopic:
-      Type: "AWS::SNS::Topic"
-      Properties:
-        TopicName: createProductTopic
-    createProductSubscription:
-      Type: "AWS::SNS::Subscription"
-      Properties:
-        Endpoint: ${env:SUBSCRIPTION_ENDPOINT_1}
-        Protocol: email
-        TopicArn:
-          Ref: createProductTopic
-        FilterPolicy: {
-          "title": ["Classic tour of Minsk"]
-        }
-
-    createExpensiveProductSubscription:
-      Type: "AWS::SNS::Subscription"
-      Properties:
-        Endpoint: ${env:SUBSCRIPTION_ENDPOINT_2}
-        Protocol: email
-        TopicArn:
-          Ref: createProductTopic
-        FilterPolicy: {
-          "title": [{"anything-but":"Classic tour of Minsk"}]
-        }
+  - ${file(../shared/src/resources/queue.yml)}
+  - Outputs:
+      CatalogItemsQueueArn:
+        Description: The ARN for Catalog Items Queue
+        Value:
+          'Fn::GetAtt': [ catalogItemsQueue, Arn ]
+        Export:
+          Name: myCatalogItemsQueueArn
 
 functions:
   importProductsFile:
@@ -95,12 +67,3 @@ functions:
             - prefix: ${env:UPLOADED_FOLDER}
           existing: true
           cors: true
-  catalogBatchProcess:
-    handler: ${self:custom.distFolder}/catalog-batch-process.catalogBatchProcess
-    events:
-      - sqs:
-          batchSize: 5
-          arn:
-            Fn::GetAtt:
-              - catalogItemsQueue
-              - Arn
