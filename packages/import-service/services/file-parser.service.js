@@ -3,37 +3,48 @@ import AWS from 'aws-sdk';
 import csvParser from 'csv-parser';
 
 const s3 = new AWS.S3();
+const sqs = new AWS.SQS();
 
 class FileParserService {
   async parseS3FileContents(s3ObjectHandle) {
+    const productTitles = [];
     const stream = s3ObjectHandle.createReadStream();
 
     return new Promise((resolve, reject) => {
       stream
         .pipe(csvParser())
         .on('data', (data) => {
-          this.handleDataChunk(data);
+          this.handleDataChunk(data, productTitles);
         })
         .on('error', (error) => {
           console.error(error);
+
           reject(error);
         })
         .on('end', () => {
+          console.log('Finish parsing products');
+
           resolve();
         });
     });
   }
 
-  handleDataChunk(chunk) {
-    console.log('=== GOT NEW PRODUCT ===');
-    console.log('Product id:', chunk.id);
-    console.log('Product title:', chunk.title);
-    console.log('Product description:', chunk.description);
-    console.log('Product price:', chunk.price);
-    console.log('Product count:', chunk.count);
-    console.log('=== END NEW PRODUCT PARSING ===');
+  handleDataChunk(chunk, productTitles) {
+    productTitles.push(chunk.title);
 
-    // record chunk to db, etc...
+    const messageBody = JSON.stringify(chunk);
+
+    console.log('==> messageBody:', messageBody);
+
+    sqs.sendMessage(
+      {
+        QueueUrl: process.env.CATALOG_ITEMS_QUEUE,
+        MessageBody: messageBody,
+      },
+      () => {
+        console.log('Message sent for chunk title', chunk.title);
+      },
+    );
   }
 
   getObjectParamsFromEvent(event) {

@@ -18,11 +18,32 @@ provider:
   lambdaHashingVersion: 20201221
   stage: dev
   profile: epam-aws-training-account
+  stackName: importServiceStack
+
+  environment:
+    CATALOG_ITEMS_QUEUE:
+      Ref: catalogItemsQueue
+
   iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "sqs:*"
+      Resource:
+        - Fn::GetAtt: [ catalogItemsQueue, Arn ]
     - Effect: "Allow"
       Action:
         - "s3:*"
       Resource: "arn:aws:s3:::epam-aws-training-task-5-upload/*"
+
+resources:
+  - ${file(../shared/src/resources/queue.yml)}
+  - Outputs:
+      CatalogItemsQueueArn:
+        Description: The ARN for Catalog Items Queue
+        Value:
+          'Fn::GetAtt': [ catalogItemsQueue, Arn ]
+        Export:
+          Name: myCatalogItemsQueueArn
 
 functions:
   importProductsFile:
